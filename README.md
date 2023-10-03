@@ -6,6 +6,8 @@ In the United States, socio-economic factors including access to healthcare, inc
 
 ![Dashboard Overview](/screenshots/Poster.jpg)
 
+![Dashboard Image](/screenshots/dashboard.png)
+
 ## Features
 
 ### Geo-Map Plot
