@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CSE-564 Project</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Koulen&family=Nanum+Gothic&family=PT+Sans&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' href='/static/style.css'>
+    <script src="https://kit.fontawesome.com/13c8d958c4.js" crossorigin="anonymous"></script>
+    <!-- Load d3.js -->
+    <script src="http://d3js.org/d3.v4.js"></script>
+    <script>
+        d3version4 = window.d3;
+        window.d3 = null;
+    </script>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script>
+        d3version6 = window.d3;
+        window.d3 = null;
+        d3 = Object.assign({}, d3version4);
+        //   console.log('v4', d3version4.version)
+        //   console.log('v6', d3version6.version)
+        //   console.log('versn', d3.version)
+    </script>
+    <script src="http://d3js.org/d3.v5.min.js"></script>
+    <script>
+        d3version5 = window.d3;
+        window.d3 = null;
+        d3 = Object.assign({}, d3version4);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script>
+        d3version3 = window.d3;
+        window.d3 = null;
+        d3 = Object.assign({}, d3version4);
+            // console.log('v3', d3version3.version)
+            // console.log('v5', d3version5.version)
+            // console.log('versn', d3.version)
+    </script>
+    <script src="http://d3js.org/d3.v4.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- <div class="row">
+            <div class="col-10">
+                <h7>A Comprehensive Analysis of County Rankings basedon Health, Wealth, Education & Quality of Life</h7>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-info" onclick="clickResetAll()">Reset Plots</button>
+            </div>
+        </div> -->
+        <!-- As a heading -->
+        <nav class="navbar bg-body-tertiary" style="background-color: #eaeaea;">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="margin-left: 230px;">A Comprehensive Analysis of County
+                    Rankings based on Health, Wealth,
+                    Education & Quality of Life</span>
+                <form class="d-flex">
+                    <button type="button" class="btn" onclick="clickResetAll()">Reset Plots</button>
+                </form>
+            </div>
+        </nav>
+        <div class="row g-2">
+            <div class="col-6 box">
+                <h5>
+                    US Map
+                </h5>
+
+                <div id="us_map"></div>
+                <div class="row" id="us_map_legend">
+
+                    <div class="col">
+                        <!-- <button type="button" class="btn btn-info" onclick="clickResetMap()">Reset Map</button> -->
+                        <nav class="navbar bg-body-tertiary" style="background-color: #eaeaea;">
+                            <div class="container-fluid">
+                                <span class="navbar-brand mb-0 h1">
+                                    <span id="state_div" class="col"></span>
+                                    <span id="county_div" class="col"></span>
+                                </span>
+                                <form class="d-flex">
+                                    <button type="button" class="btn" onclick="clickResetMap()">Reset Map</button>
+                                </form>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function clickResetMap() {
+                    fetch('/usmapdata', {
+                        method: "GET",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    }).then(function (response) {
+                        return response.json()
+                    }).then(function (usdata) {
+                        createUSMap(usdata)
+                    });
+                }
+            </script>
+            <div class="col-6 box">
+                <h5>
+                    MDS Plot
+                </h5>
+                <div id="mdsplot"></div>
+            </div>
+        </div>
+        <script>
+            function clickResetAll() {
+                // Reset MAP
+                fetch('/usmapdata', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    return response.json()
+                }).then(function (usdata) {
+                    stateSelected = false;
+                    createUSMap(usdata)
+                });
+
+                // Reset BAR
+                fetch('/barchart/top10county', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        updateBarChart(data.top10, "Top 10");
+                    });
+
+                // Reset MDS
+                fetch('/mds_variable')
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        createMDSPlot(data);
+                    })
+
+                // Reset PCP
+                fetch('/pcpdata')
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        data = JSON.parse(data.pcpData);
+                        //console.log(data)
+                        createPCPPlot(data, []);
+                    })
+
+                // Reset BOX
+                fetch('/boxData')
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        //data = JSON.parse(data.pcpData);
+                        //console.log(data)
+                        BoxPlot(data);
+                    })
+
+            }
+        </script>
+        <br>
+
+        <div class="row g-2">
+            <div class="col-3 box p-2">
+
+                <h5>
+                    Bar Chart
+                </h5>
+
+                <div style="display: inline;" class="col-sm-4 checkbox" id="checkboxb"
+                    style="font-size:large; float: left;">
+                    <h7>Most</h7>
+                    <label class="switch">
+                        <input type="checkbox" id="topWrst" name="topWrst" value="topWrst"
+                            style="height: 20px; width:20px;" onclick='handleClickCBox(this);'>
+                        <span style="float: right" class="slider round"></span>
+                    </label>
+                    <h7>Least</h7>
+
+                </div>
+                <div id="bar_chart"></div>
+
+            </div>
+            <div class="col-6 box p-2">
+                <h5>
+                    PCP Plot</h5>
+                <br>
+                <div id="pcpplot"></div>
+            </div>
+            <div class="col-3 box p-2">
+
+
+                <h5>
+                    Box Plot</h5>
+                <!-- Initialize a select button -->
+                <select id="selectButton"></select>
+                <div id="box_plot"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Create a div where the graph will take place -->
+    <script type="text/javascript" src="/static/us_map.js"></script>
+    <script type="text/javascript" src="/static/pcp.js"></script>
+    <script type="text/javascript" src="/static/bar_chart.js"></script>
+    <script type="text/javascript" src="/static/mds.js"></script>
+    <script type="text/javascript" src="/static/boxplot.js"></script>
+    <script>
+        var checkBoxChart = false;
+        // var defaultFeature  = 'GDP (current US$)'
+        // var yearSt = 2000
+        // var yearEnd = 2019
+        // var timeSerBrushCtr=0
+        // var ccMapping = d3.map();
+        // var svgtime;
+        // var svgb;
+        // var svgw;
+        // var svgtime;
+        // var wm_data;    
+        // var country = 'USA';
+        // var year = 2000;
+
+        // var axis_order = [
+        //         "Exports of goods and services (% of GDP)",                                                         
+        //         "Trade (% of GDP)",                                                                                
+        //         "Mineral rents (% of GDP)",                                                                        
+        //         "GDP (current US$)",                                                                                
+        //         "GNI (current US$)"                                                                            
+        //         ]
+
+
+        // fetch('/mapping/countryCodes')
+        //     .then(function (response) {
+        //         return response.json();
+        //     }).then(function (data) {
+        //         countryCodeMapping(data)
+        //         document.getElementById("statc").innerHTML = ccMapping.get(country)
+
+        //     });
+
+        //     function countryCodeMapping(data){
+
+        //         for(var i = 0; i < data.length; i++) {
+        //             var obj = data[i];
+        //             ccMapping.set(obj["Country Code"], obj['Country Name'])
+        //         }
+        //     }
+
+        fetch('/barchart/top10county', {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                updateBarChart(data.top10, "Top 10");
+            });
+
+        function handleClickCBox() {
+            //here checked(true) means worst
+            checkBoxChart = d3.select('input[name="topWrst"]').node().checked;
+
+            if (stateSelected == false) {
+                fetch('/barchart/top10county', {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        if (checkBoxChart == false) {
+                            updateBarChart(data.top10, "Top 10");
+                        } else if (checkBoxChart == true) {
+                            updateBarChart(data.worst10, "Worst 10");
+                        }
+                    });
+
+            }
+            else {
+
+                fetch(`/statedata?state=${stateName}`, {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        // console.log(data);
+                        // console.log(data.top10instate);
+                        if (checkBoxChart == false) {
+                            updateBarChart(data.top10instate, stateName);
+                        } else {
+                            updateBarChart(data.worst10instate, stateName);
+                        }
+                        //updateBarChart(data.top10instate, state_name);
+                    })
+            }
+
+
+
+        }
+
+        fetch('/pcpdata')
+            .then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                data = JSON.parse(data.pcpData);
+                //console.log(data)
+                createPCPPlot(data, []);
+            })
+        // BOX Plot 
+        fetch('/boxData')
+            .then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                //data = JSON.parse(data.pcpData);
+                //console.log(data)
+                BoxPlot(data);
+            })
+        fetch('/mds_variable')
+            .then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                createMDSPlot(data);
+            })
+    </script>
+</body>
+
+</html>
